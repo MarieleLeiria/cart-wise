@@ -1,0 +1,74 @@
+:root {
+  font-family: system-ui, sans-serif;
+  color: #1a1a1a;
+}
+
+body {
+  margin: 0;
+  padding: 12px;
+  min-width: 360px;
+}
+
+.popup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dashboard {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+button.primary {
+  background: #1565c0;
+  color: #fff;
+  border: 0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button.primary:focus-visible,
+button:focus-visible,
+select:focus-visible,
+input:focus-visible {
+  outline: 2px solid #1565c0;
+  outline-offset: 2px;
+}
+
+.list-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.list-toolbar label {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  gap: 4px;
+}
+
+.item-row {
+  display: flex;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.item-row__variant,
+.item-row__meta {
+  margin: 4px 0;
+  font-size: 13px;
+  color: #444;
+}
+
+.product-list__empty {
+  color: #666;
+  font-size: 14px;
+}
+
+.popup__footer {
+  margin: 0;
+}
