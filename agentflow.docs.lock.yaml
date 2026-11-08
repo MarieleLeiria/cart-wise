@@ -1,0 +1,13 @@
+# Pins documentation repositories by full SHA (40 hex). Do not abbreviate.
+# Update via PR only when intentionally adopting new doc versions.
+version: 1
+sources:
+  architecture:
+    repo: "https://github.com/MarieleLeiria/architecture-cart-wise"
+    commit: "941a73a570e033884f227188993b5a738c2f9704"
+  trd:
+    repo: "https://github.com/MarieleLeiria/trd-cart-wise"
+    commit: "a2b4cd32619a71d2e7aa93ccdbcfb683f1442bbd"
+  engineering-standards:
+    repo: "https://github.com/MarieleLeiria/engineering-standards-cart-wise"
+    commit: "d662c6f3f89a07c1a1fd3b9ff8778b4f4d33677d"
