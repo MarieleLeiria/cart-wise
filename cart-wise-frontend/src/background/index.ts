@@ -1,6 +1,13 @@
 import type { CaptureReason } from "@/shared/capture-reasons";
 import { runtimeMessageSchema } from "@/shared/messages";
 import { setFailureBadge } from "@/background/badge";
+import {
+  activateSite,
+  deactivateSite,
+  isSiteActive,
+  listActiveSites,
+  reconcileActiveSites,
+} from "@/background/active-sites";
 import { handleCaptureActiveTab, persistFromCapture } from "@/background/capture-flow";
 import { registerBackgroundCommands } from "@/background/commands";
 import { applyCommandResultBadge } from "@/background/on-command-result";
@@ -8,6 +15,16 @@ import { applyCommandResultBadge } from "@/background/on-command-result";
 type FailureResponse = { ok: false; reason: CaptureReason };
 
 registerBackgroundCommands(applyCommandResultBadge);
+
+void reconcileActiveSites();
+
+chrome.runtime.onInstalled?.addListener(() => {
+  void reconcileActiveSites();
+});
+
+chrome.runtime.onStartup?.addListener(() => {
+  void reconcileActiveSites();
+});
 
 function isTrustedSender(sender: chrome.runtime.MessageSender): boolean {
   return sender.id === chrome.runtime.id;
@@ -57,6 +74,40 @@ chrome.runtime.onMessage.addListener((raw, sender, sendResponse) => {
       }
       case "RUN_CAPTURE": {
         sendResponse({ ok: false, reason: "adapter_error" } satisfies FailureResponse);
+        break;
+      }
+      case "ACTIVATE_SITE": {
+        if (!isExtensionUiSender(sender)) {
+          sendResponse({ ok: false, reason: "invalid_payload" } satisfies FailureResponse);
+          break;
+        }
+        sendResponse(await activateSite(message.url));
+        break;
+      }
+      case "DEACTIVATE_SITE": {
+        if (!isExtensionUiSender(sender)) {
+          sendResponse({ ok: false, reason: "invalid_payload" } satisfies FailureResponse);
+          break;
+        }
+        await deactivateSite(message.pattern);
+        sendResponse({ ok: true });
+        break;
+      }
+      case "GET_SITE_STATUS": {
+        if (!isExtensionUiSender(sender)) {
+          sendResponse({ ok: false, reason: "invalid_payload" } satisfies FailureResponse);
+          break;
+        }
+        const active = await isSiteActive(message.url);
+        sendResponse({ ok: true, active });
+        break;
+      }
+      case "LIST_ACTIVE_SITES": {
+        if (!isExtensionUiSender(sender)) {
+          sendResponse({ ok: false, reason: "invalid_payload" } satisfies FailureResponse);
+          break;
+        }
+        sendResponse({ ok: true, sites: await listActiveSites() });
         break;
       }
       default: {

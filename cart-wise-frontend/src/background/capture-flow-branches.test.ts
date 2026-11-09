@@ -8,11 +8,11 @@ const captured: ItemCapturedMessage = {
   payload: {
     name: "Produto",
     images: ["https://cdn.example/i.jpg"],
-    pageUrl: "https://www.amazon.com.br/dp/1",
+    pageUrl: "https://loja.example/p/1",
     priceText: "R$ 10,00",
     currencyHint: "BRL",
     variant: {},
-    adapterId: "amazon-com-br",
+    adapterId: "generic",
     trigger: "manual",
   },
 };
@@ -35,17 +35,17 @@ describe("handleCaptureActiveTab branches", () => {
     expect(result.ok).toBe(true);
   });
 
-  it("propaga permission", async () => {
+  it("propaga not_https", async () => {
     vi.spyOn(captureTab, "captureActiveTab").mockResolvedValue({
       ok: false,
-      permission: "denied",
+      permission: "not_https",
     });
     const result = await handleCaptureActiveTab({
       type: "CAPTURE_ACTIVE_TAB",
       tabId: 1,
       source: "popup",
     });
-    expect(result).toEqual({ ok: false, permission: "denied" });
+    expect(result).toEqual({ ok: false, permission: "not_https" });
   });
 
   it("propaga failure reason", async () => {

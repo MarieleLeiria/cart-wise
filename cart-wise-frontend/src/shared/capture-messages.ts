@@ -3,6 +3,15 @@ import { captureReasonLabels } from "@/shared/capture-reasons";
 
 export const SAVE_BUTTON_LABEL = "Salvar no CartWise";
 
+export const siteActivationTexts = {
+  activate: "Ativar neste site",
+  deactivate: "Desativar neste site",
+  activeHint: "Neste site o Cart Wise mostra o botão Salvar automaticamente.",
+  inactiveHint: "Ative o site para ver o botão Salvar nas próximas visitas.",
+  activated: "Site ativado.",
+  deactivated: "Site desativado.",
+} as const;
+
 export const permissionTexts = {
   request: "O CartWise precisa de permissão para ler esta página.",
   denied: "Sem permissão, este site não pode ser salvo.",

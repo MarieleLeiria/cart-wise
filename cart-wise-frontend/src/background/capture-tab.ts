@@ -1,46 +1,15 @@
-import { isMvpHostUrl } from "@/background/mvp-hosts";
+import { contentScriptJsFiles } from "@/background/active-sites";
 import type { CaptureActiveTabMessage, ItemCapturedMessage } from "@/shared/messages";
 import type { CaptureReason } from "@/shared/capture-reasons";
 
 export type CaptureTabFailure = { ok: false; reason: CaptureReason };
-export type CaptureTabPermission = { ok: false; permission: "denied" | "not_https" };
 
-function originPatternForUrl(url: string): string | null {
-  try {
-    const parsed = new URL(url);
-    if (parsed.protocol !== "https:") {
-      return null;
-    }
-    return `${parsed.protocol}//${parsed.hostname}/*`;
-  } catch {
-    return null;
+function scriptFilesOrThrow(): string[] {
+  const files = contentScriptJsFiles();
+  if (files.length === 0) {
+    throw new Error("no_content_script");
   }
-}
-
-async function ensureHostPermission(url: string): Promise<"granted" | "denied" | "not_https"> {
-  if (!url.startsWith("https://")) {
-    return "not_https";
-  }
-  if (isMvpHostUrl(url)) {
-    return "granted";
-  }
-  const pattern = originPatternForUrl(url);
-  if (!pattern) {
-    return "not_https";
-  }
-  const has = await chrome.permissions.contains({ origins: [pattern] });
-  if (has) {
-    return "granted";
-  }
-  const granted = await chrome.permissions.request({ origins: [pattern] });
-  return granted ? "granted" : "denied";
-}
-
-function contentScriptFiles(): string[] {
-  const manifest = chrome.runtime.getManifest();
-  const scripts = manifest.content_scripts ?? [];
-  const files = scripts.flatMap((entry) => entry.js ?? []);
-  return files.length > 0 ? files : [];
+  return files;
 }
 
 async function pingContentScript(tabId: number): Promise<boolean> {
@@ -53,11 +22,10 @@ async function pingContentScript(tabId: number): Promise<boolean> {
 }
 
 async function injectContentScript(tabId: number): Promise<void> {
-  const files = contentScriptFiles();
-  if (files.length === 0) {
-    throw new Error("no_content_script");
-  }
-  await chrome.scripting.executeScript({ target: { tabId }, files });
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    files: scriptFilesOrThrow(),
+  });
 }
 
 export async function runCaptureOnTab(
@@ -93,19 +61,12 @@ export async function runCaptureOnTab(
 
 export async function captureActiveTab(
   message: CaptureActiveTabMessage,
-): Promise<ItemCapturedMessage | CaptureTabFailure | CaptureTabPermission> {
+): Promise<ItemCapturedMessage | CaptureTabFailure | { ok: false; permission: "not_https" }> {
   try {
     const tab = await chrome.tabs.get(message.tabId);
     const url = tab.url ?? "";
     if (!url.startsWith("https://")) {
       return { ok: false, permission: "not_https" };
-    }
-    const permission = await ensureHostPermission(url);
-    if (permission === "not_https") {
-      return { ok: false, permission: "not_https" };
-    }
-    if (permission === "denied") {
-      return { ok: false, permission: "denied" };
     }
     return runCaptureOnTab(message.tabId);
   } catch {

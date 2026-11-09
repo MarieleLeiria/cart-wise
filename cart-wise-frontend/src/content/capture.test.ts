@@ -25,7 +25,7 @@ describe("performCapture", () => {
     vi.resetModules();
     const { performCapture } = await import("@/content/capture");
     const result = await performCapture("manual", { skipServiceWorker: true });
-    expect(result).toEqual({ ok: false, reason: "adapter_error" });
+    expect(result).toEqual({ ok: false, reason: "name_not_found" });
   });
 
   it("auto chama service worker", async () => {

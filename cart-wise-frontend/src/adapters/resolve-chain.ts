@@ -1,20 +1,12 @@
-import type { StoreAdapter } from "@/adapters/types";
 import { genericAdapter } from "@/adapters/generic";
-import { storeAdapters } from "@/adapters/registry";
+import type { StoreAdapter } from "@/adapters/types";
 import type { CaptureReason } from "@/shared/capture-reasons";
 import type { CapturedProduct } from "@/shared/schemas";
 import type { ExtractResult } from "@/adapters/types";
 
-export function adaptersForUrl(url: string, trigger: "auto" | "manual"): StoreAdapter[] {
-  const specific = storeAdapters.filter((a) => a.id !== "generic" && a.matches(url));
-  if (trigger === "manual") {
-    const first = specific[0];
-    return first ? [first] : [genericAdapter];
-  }
-  if (specific.length > 0) {
-    const first = specific[0];
-    return first ? [first, genericAdapter] : [genericAdapter];
-  }
+export function adaptersForUrl(url = "", trigger: "auto" | "manual" = "manual"): StoreAdapter[] {
+  void url;
+  void trigger;
   return [genericAdapter];
 }
 
@@ -27,17 +19,9 @@ export async function runAdapterChain(
   trigger: "auto" | "manual",
 ): Promise<ExtractResult> {
   setCaptureTrigger(trigger);
-  for (let index = 0; index < adapters.length; index += 1) {
-    const adapter = adapters[index];
-    if (!adapter) {
-      continue;
-    }
-    let result: ExtractResult;
-    try {
-      result = await adapter.extract();
-    } catch {
-      return { status: "fail", reason: "adapter_error" satisfies CaptureReason };
-    }
+  const adapter = adapters[0] ?? genericAdapter;
+  try {
+    const result = await adapter.extract();
     if (result.status === "ok") {
       const product: CapturedProduct = {
         ...result.product,
@@ -49,9 +33,8 @@ export async function runAdapterChain(
     if (result.status === "fail") {
       return result;
     }
-    if (index === adapters.length - 1) {
-      return { status: "fail", reason: "adapter_error" satisfies CaptureReason };
-    }
+    return { status: "fail", reason: "adapter_error" satisfies CaptureReason };
+  } catch {
+    return { status: "fail", reason: "adapter_error" satisfies CaptureReason };
   }
-  return { status: "fail", reason: "adapter_error" satisfies CaptureReason };
 }

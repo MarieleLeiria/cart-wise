@@ -53,6 +53,14 @@ describe("background sender checks", () => {
     expect(response).toEqual({ ok: false, reason: "invalid_payload" });
   });
 
+  it("ACTIVATE_SITE exige UI da extensão", async () => {
+    const response = await emit(
+      { type: "ACTIVATE_SITE", tabId: 1, url: "https://loja.example/p" },
+      { id: "cart-wise-ext" },
+    );
+    expect(response).toEqual({ ok: false, reason: "invalid_payload" });
+  });
+
   it("ITEM_CAPTURED exige tab", async () => {
     const response = await emit(
       { type: "ITEM_CAPTURED", payload: captured },

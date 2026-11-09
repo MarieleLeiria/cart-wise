@@ -8,7 +8,7 @@ const sample: CapturedProduct = {
   pageUrl: "https://www.amazon.com.br/dp/123?utm_source=x",
   priceText: "R$ 49,90",
   variant: { color: "azul" },
-  adapterId: "amazon-com-br",
+  adapterId: "generic",
   trigger: "manual",
 };
 

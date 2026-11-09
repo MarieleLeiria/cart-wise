@@ -11,7 +11,7 @@ const message: ItemCapturedMessage = {
     priceText: "R$ 10,00",
     currencyHint: "BRL",
     variant: {},
-    adapterId: "amazon-com-br",
+    adapterId: "generic",
     trigger: "manual",
   },
 };

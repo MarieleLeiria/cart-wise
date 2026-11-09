@@ -1,13 +1,8 @@
 import { defineManifest } from "@crxjs/vite-plugin";
 import packageJson from "./package.json";
 
-const hostPermissions = [
-  "https://*.magazineluiza.com.br/*",
-  "https://*.shein.com/*",
-  "https://*.shopee.com.br/*",
-  "https://*.mercadolivre.com.br/*",
-  "https://*.amazon.com.br/*",
-] as const;
+/** Never matches production hosts; bundles the content script for dynamic registration. */
+const contentScriptBundleMatch = "https://cart-wise-bundle-placeholder.invalid/*";
 
 export default defineManifest({
   manifest_version: 3,
@@ -15,11 +10,20 @@ export default defineManifest({
   description: "Salve produtos de lojas online no seu carrinho local.",
   version: packageJson.version,
   permissions: ["storage", "activeTab", "scripting", "contextMenus"],
-  host_permissions: [...hostPermissions],
   optional_host_permissions: ["https://*/*"],
+  icons: {
+    16: "public/icons/icon16.png",
+    32: "public/icons/icon32.png",
+    48: "public/icons/icon48.png",
+    128: "public/icons/icon128.png",
+  },
   action: {
     default_title: "Cart Wise",
     default_popup: "src/ui/popup/index.html",
+    default_icon: {
+      16: "public/icons/icon16.png",
+      32: "public/icons/icon32.png",
+    },
   },
   options_ui: {
     page: "src/ui/dashboard/index.html",
@@ -37,7 +41,7 @@ export default defineManifest({
   },
   content_scripts: [
     {
-      matches: [...hostPermissions],
+      matches: [contentScriptBundleMatch],
       js: ["src/content/index.ts"],
       run_at: "document_idle",
     },

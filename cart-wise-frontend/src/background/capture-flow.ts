@@ -47,7 +47,7 @@ export async function handleCaptureActiveTab(
 ): Promise<
   | SuccessCaptureResponse
   | FailureResponse
-  | { ok: false; permission: "denied" | "not_https" }
+  | { ok: false; permission: "not_https" }
 > {
   const captureResult = await runTabCapture(message);
   if ("permission" in captureResult) {

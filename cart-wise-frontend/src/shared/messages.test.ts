@@ -11,6 +11,15 @@ describe("runtimeMessageSchema", () => {
     expect(parsed.success).toBe(true);
   });
 
+  it("FR-msg valida ACTIVATE_SITE", () => {
+    const parsed = runtimeMessageSchema.safeParse({
+      type: "ACTIVATE_SITE",
+      tabId: 1,
+      url: "https://loja.example/p",
+    });
+    expect(parsed.success).toBe(true);
+  });
+
   it("FR-msg rejeita tipo desconhecido", () => {
     const parsed = runtimeMessageSchema.safeParse({
       type: "UNKNOWN",

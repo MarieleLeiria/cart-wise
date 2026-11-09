@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { popupMessageFor, toastMessageFor } from "@/shared/capture-messages";
+import {
+  permissionTexts,
+  popupMessageFor,
+  toastMessageFor,
+} from "@/shared/capture-messages";
 
 describe("capture-messages", () => {
   it("toast de sucesso", () => {
@@ -13,5 +17,8 @@ describe("capture-messages", () => {
       "Sem permissão",
     );
     expect(toastMessageFor({ kind: "permission", permission: "denied" })).toBeNull();
+    expect(popupMessageFor({ kind: "permission", permission: "request" })).toBe(
+      permissionTexts.request,
+    );
   });
 });

@@ -2,6 +2,8 @@
   "name": "cart-wise-frontend",
   "version": "0.1.0",
   "private": true,
+  "author": "Mariele Leiria",
+  "license": "UNLICENSED",
   "type": "module",
   "description": "Cart Wise browser extension (MV3)",
   "scripts": {
@@ -11,6 +13,7 @@
     "test": "vitest run --coverage",
     "test:e2e": "playwright test",
     "build": "vite build",
+    "package": "npm run build && node scripts/package.mjs",
     "audit": "npm audit --audit-level=high"
   },
   "dependencies": {
@@ -35,6 +38,7 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.2.1",
     "@vitest/coverage-v8": "^5.1.0",
+    "adm-zip": "^0.6.1",
     "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react": "^7.37.5",

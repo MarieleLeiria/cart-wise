@@ -1,10 +1,10 @@
 import { performCapture } from "@/content/capture";
-import { registerAutoCaptureListener } from "@/content/auto-capture";
+import { mountSaveFab } from "@/content/save-button";
 import { showCaptureToast } from "@/content/toast";
 import type { CaptureReason } from "@/shared/capture-reasons";
 import { runCaptureMessageSchema } from "@/shared/messages";
 
-registerAutoCaptureListener();
+mountSaveFab();
 
 chrome.runtime.onMessage.addListener((raw, _sender, sendResponse) => {
   if (raw && typeof raw === "object" && (raw as { type?: string }).type === "PING") {

@@ -4,10 +4,7 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { extractGenericFromFixtureHtml } from "@/adapters/shared/generic-extract";
 
-const fixtureDir = path.join(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "../amazon-com-br/fixtures",
-);
+const fixtureDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "fixtures");
 
 function readFixture(name: string): string {
   return readFileSync(path.join(fixtureDir, name), "utf8");
@@ -17,7 +14,7 @@ describe("generic extract fixtures", () => {
   it("simple.html", async () => {
     const result = await extractGenericFromFixtureHtml(
       readFixture("simple.html"),
-      "https://www.amazon.com.br/dp/1",
+      "https://loja.example/p/1",
     );
     expect(result.status).toBe("ok");
     if (result.status === "ok") {
@@ -30,7 +27,7 @@ describe("generic extract fixtures", () => {
   it("promo.html usa preço atual", async () => {
     const result = await extractGenericFromFixtureHtml(
       readFixture("promo.html"),
-      "https://www.amazon.com.br/dp/2",
+      "https://loja.example/p/2",
     );
     expect(result.status).toBe("ok");
     if (result.status === "ok") {
